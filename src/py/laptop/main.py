@@ -68,5 +68,5 @@ if __name__ == '__main__':
   # TODO: move to apache/mod_wsgi, http://bottlepy.org/docs/dev/tutorial.html#apache-mod-wsgi
   # TODO: Load from configs. Localhost config to use 8080 and 127.0.0.1
   bootstrap()
-  run(server="paste", host="0.0.0.0", port=8080)
+  run(server="paste", host="0.0.0.0", port=80)
 
