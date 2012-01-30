@@ -1,4 +1,4 @@
-from bottle import route, run
+from bottle import route, run, request
 from mako.template import Template
 
 from laptop import model
@@ -48,16 +48,55 @@ def admin_home():
 
 @route('/admin/product')
 def admin_product():
-  template = Template(filename='%s/admin/product.mako' % template_dir)
   # Get product data
-  return template.render()
+  products = model.session.query(model.Product).all()
+  brands = model.session.query(model.Brand).all()
+  template = Template(filename='%s/admin/product.mako' % template_dir)
+  return template.render(products=products, brands=brands)
 
 @route('/admin/product/post', method="POST")
 def admin_product_post():
+  real_secret = model.config.get('general', 'secret') 
+  their_secret = request.forms.secret
   # Validate secret key
-  # Validate data
-  # Insert data, update session
+  if their_secret == real_secret:
+    # Validate data
+    brand_id = request.forms.brand_id
+    type = request.forms.type
+    name = request.forms.name
+    if brand_id > 0 and type != "" and name != "":
+      # Insert data, update session
+      product = model.Product(brand_id=brand_id, type=type, name=name)
+      model.session.add(product)
+      model.session.commit()
   return admin_product()
+
+@route('/admin/brand')
+def admin_brand():
+  # Get product data
+  brands = model.session.query(model.Brand).all()
+  template = Template(filename='%s/admin/brand.mako' % template_dir)
+  return template.render(brands=brands)
+
+@route('/admin/brand/post', method="POST")
+def admin_brand_post():
+  real_secret = model.config.get('general', 'secret') 
+  their_secret = request.forms.secret
+  # Validate secret key
+  if their_secret == real_secret:
+    # Validate data
+    reliability_score = int(request.forms.reliability_score)
+    name = request.forms.name
+    description = request.forms.description
+    url = request.forms.url
+    if reliability_score >= 0 and reliability_score <= 100 and \
+       name != "" and description != "" and url != "":
+      # Insert data, update session
+      brand = model.Brand(reliability_score=reliability_score, 
+        name=name, description=description, url=url)
+      model.session.add(brand)
+      model.session.commit()
+  return admin_brand()
 
 # Import configuration params
 def bootstrap():
@@ -68,5 +107,6 @@ if __name__ == '__main__':
   # TODO: move to apache/mod_wsgi, http://bottlepy.org/docs/dev/tutorial.html#apache-mod-wsgi
   # TODO: Load from configs. Localhost config to use 8080 and 127.0.0.1
   bootstrap()
-  run(server="paste", host="0.0.0.0", port=80)
+  run(server="paste", host=model.config.get('general', 'host'),
+      port=model.config.get('general', 'port'))
 

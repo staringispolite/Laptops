@@ -5,14 +5,16 @@ from sqlalchemy.engine.base import Engine
 from sqlalchemy import create_engine
 from sqlalchemy.schema import MetaData
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 metadata = MetaData()
 Base = declarative_base(metadata)
 config = ConfigParser.ConfigParser()
 engine = None
+session = None
 
 def bootstrap():
-  global config, engine, metadata
+  global config, engine, metadata, session
   config.read('config/app.cfg')
 
   username = config.get('sqlalchemy', 'username')
@@ -22,7 +24,9 @@ def bootstrap():
   engine = create_engine('mysql://%s:%s@%s/%s' % (username, password, host, database))
   metadata = Brand.metadata
   metadata.bind = engine
-  
+  Session = sessionmaker(bind=engine)
+  session = Session()
+
 
 class Brand(Base):
   __tablename__ = 'brand'
