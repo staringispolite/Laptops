@@ -14,9 +14,22 @@
 </form>
 
 <h2>All Current Brands</h2>
+<table>
+  <tr>
+    <td>id</td>
+    <td>name</td>
+    <td>description</td>
+    <td>reliability score</td>
+    <td>url</td>
+  <tr>
 % for brand in brands:
-  <p>
-    ${brand.id} ${brand.name} ${brand.description} ${brand.reliability_score} ${brand.url}
-  </p>
+  <tr>
+    <td>${brand.id}</td>
+    <td>${brand.name}</td>
+    <td>${brand.description}</td>
+    <td>${brand.reliability_score}</td>
+    <td>${brand.url}</td>
+  </tr>
 % endfor
+</table>
 

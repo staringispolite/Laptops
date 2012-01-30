@@ -1,2 +1,6 @@
-<a href='/admin/product'>product</a>
-<a href='/admin/brand'>brand</a>
+<p>
+  <a href='/admin/product'>product</a>
+</p>
+<p>
+  <a href='/admin/brand'>brand</a>
+</p>

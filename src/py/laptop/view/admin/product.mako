@@ -24,8 +24,19 @@
 </form>
 
 <h2>All Current Products</h2>
-% for product in products:
-  <p>
-    ${product.id} ${product.name} ${product.type} ${product.brand_id}
-  </p>
+<table>
+  <tr>
+    <td>id</td>
+    <td>name</td>
+    <td>type</td>
+    <td>brand id</td>
+  <tr>
+  % for product in products:
+  <tr>
+    <td>${product.id}</td>
+    <td>${product.name}</td>
+    <td>${product.type}</td>
+    <td>${product.brand_id}</td>
+  </tr>
 % endfor
+</table>
