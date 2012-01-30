@@ -42,11 +42,13 @@ def api(version=None, endpoint=None):
   return 'TODO send this to 500'
 
 @route('/admin')
+@route('/admin/')
 def admin_home():
   template = Template(filename='%s/admin/home.mako' % template_dir)
   return template.render()
 
 @route('/admin/product')
+@route('/admin/product/')
 def admin_product():
   # Get product data
   products = model.session.query(model.Product).all()
@@ -72,6 +74,7 @@ def admin_product_post():
   return admin_product()
 
 @route('/admin/brand')
+@route('/admin/brand/')
 def admin_brand():
   # Get product data
   brands = model.session.query(model.Brand).all()

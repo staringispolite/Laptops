@@ -15,6 +15,9 @@ session = None
 
 def bootstrap():
   global config, engine, metadata, session
+  # Local config
+  #config.read('config/app-local.cfg')
+  # Live config
   config.read('config/app.cfg')
 
   username = config.get('sqlalchemy', 'username')
