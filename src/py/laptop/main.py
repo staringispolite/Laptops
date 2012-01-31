@@ -47,32 +47,6 @@ def admin_home():
   template = Template(filename='%s/admin/home.mako' % template_dir)
   return template.render()
 
-@route('/admin/product')
-@route('/admin/product/')
-def admin_product():
-  # Get product data
-  products = model.session.query(model.Product).all()
-  brands = model.session.query(model.Brand).all()
-  template = Template(filename='%s/admin/product.mako' % template_dir)
-  return template.render(products=products, brands=brands)
-
-@route('/admin/product/post', method="POST")
-def admin_product_post():
-  real_secret = model.config.get('general', 'secret') 
-  their_secret = request.forms.secret
-  # Validate secret key
-  if their_secret == real_secret:
-    # Validate data
-    brand_id = request.forms.brand_id
-    type = request.forms.type
-    name = request.forms.name
-    if brand_id > 0 and type != "" and name != "":
-      # Insert data, update session
-      product = model.Product(brand_id=brand_id, type=type, name=name)
-      model.session.add(product)
-      model.session.commit()
-  return admin_product()
-
 @route('/admin/brand')
 @route('/admin/brand/')
 def admin_brand():
@@ -94,12 +68,109 @@ def admin_brand_post():
     url = request.forms.url
     if reliability_score >= 0 and reliability_score <= 100 and \
        name != "" and description != "" and url != "":
-      # Insert data, update session
-      brand = model.Brand(reliability_score=reliability_score, 
-        name=name, description=description, url=url)
-      model.session.add(brand)
-      model.session.commit()
+      try:
+        # Insert data, update session
+        brand = model.Brand(reliability_score=reliability_score, 
+          name=name, description=description, url=url)
+        model.session.add(brand)
+        model.session.commit()
+      except:
+        # TODO: Log error.
+        model.session.rollback()
   return admin_brand()
+
+@route('/admin/product')
+@route('/admin/product/')
+def admin_product():
+  # Get product data
+  products = model.session.query(model.Product).all()
+  brands = model.session.query(model.Brand).all()
+  template = Template(filename='%s/admin/product.mako' % template_dir)
+  return template.render(products=products, brands=brands)
+
+@route('/admin/product/post', method="POST")
+def admin_product_post():
+  real_secret = model.config.get('general', 'secret') 
+  their_secret = request.forms.secret
+  # Validate secret key
+  if their_secret == real_secret:
+    # Validate data
+    brand_id = int(request.forms.brand_id)
+    type = request.forms.type
+    name = request.forms.name
+    if brand_id > 0 and type != "" and name != "":
+      try:
+        # Insert data, update session
+        product = model.Product(brand_id=brand_id, type=type, name=name)
+        model.session.add(product)
+        model.session.commit()
+      except:
+        # TODO: Log error.
+        model.session.rollback()
+  return admin_product()
+
+@route('/admin/component-type')
+@route('/admin/component-type/')
+def admin_component_type():
+  # Get component_type data
+  component_types = model.session.query(model.ComponentType).all()
+  template = Template(filename='%s/admin/component_type.mako' % template_dir)
+  return template.render(component_types=component_types)
+
+@route('/admin/component-type/post', method="POST")
+def admin_component_type_post():
+  real_secret = model.config.get('general', 'secret') 
+  their_secret = request.forms.secret
+  # Validate secret key
+  if their_secret == real_secret:
+    # Validate data
+    name = request.forms.name
+    description = request.forms.description
+    if name != "" and description != "":
+      try:
+        # Insert data, update session
+        component_type = model.ComponentType(
+          name=name, description=description)
+        model.session.add(component_type)
+        model.session.commit()
+      except:
+        # TODO: Log error.
+        model.session.rollback()
+  return admin_component_type()
+
+@route('/admin/component')
+@route('/admin/component/')
+def admin_component():
+  # Get component data
+  components = model.session.query(model.Component).all()
+  component_types = model.session.query(model.ComponentType).all()
+  template = Template(filename='%s/admin/component.mako' % template_dir)
+  return template.render(components=components, component_types=component_types)
+
+@route('/admin/component/post', method="POST")
+def admin_component_post():
+  real_secret = model.config.get('general', 'secret') 
+  their_secret = request.forms.secret
+  # Validate secret key
+  if their_secret == real_secret:
+    # Validate data
+    component_type_id = int(request.forms.component_type_id)
+    value = int(request.forms.value)
+    name = request.forms.name
+    description = request.forms.description
+    if component_type_id > 0 and value > 0 and name != "" and \
+       description != "":
+      try:
+        # Insert data, update session
+        component = model.component(component_type_id=component_type_id,
+          value=value, name=name, description=description)
+        model.session.add(component)
+        model.session.commit()
+      except:
+        # TODO: Log error.
+        model.session.rollback()
+  return admin_component()
+
 
 # Import configuration params
 def bootstrap():

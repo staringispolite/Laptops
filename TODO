@@ -1,11 +1,14 @@
-data entry forms
-  product, product/post (product data)
-  component, component/post
-  component_type, component_type/post
-  product_component (drop-downs), product_component/post
-server port via config file
-deploy plan
-fabfile
-auto-key usage instead of -i every time
-Base mako template
+  data entry forms
+X   admin, admin/post (admin data)
+X   product, product/post (product data)
+X   DB error "Can't reconnect until invalid transaction is rolled back"
+      - see if try/except works.
+X    component, component/post
+X    component_type, component_type/post
+    product_component (drop-downs), product_component/post
+X server port via config file
+X deploy plan
+  fabfile
+  auto-key usage instead of -i every time
+  Base mako template
 

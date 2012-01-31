@@ -9,7 +9,7 @@
     <select name="brand_id">
       <option value="0">CHOOSE A BRAND</option>
       % for brand in brands:
-        <option name="${brand.id}">${brand.name}</option>
+        <option value="${brand.id}">${brand.name}</option>
       % endfor
     </select>
     <select name="type">
