@@ -162,7 +162,7 @@ def admin_component_post():
        description != "":
       try:
         # Insert data, update session
-        component = model.component(component_type_id=component_type_id,
+        component = model.Component(component_type_id=component_type_id,
           value=value, name=name, description=description)
         model.session.add(component)
         model.session.commit()
