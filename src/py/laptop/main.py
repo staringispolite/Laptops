@@ -171,6 +171,37 @@ def admin_component_post():
         model.session.rollback()
   return admin_component()
 
+@route('/admin/product-component-map')
+@route('/admin/product-component-map/')
+def admin_product_component_map():
+  # Get product_component_map data
+  mappings = model.session.query(model.ProductComponentMap).join(model.Product).join(model.Component).all()
+  components = model.session.query(model.Component).all()
+  products = model.session.query(model.Product).all()
+  template = Template(filename='%s/admin/product_component_map.mako' % template_dir)
+  return template.render(mappings=mappings, products=products, components=components)
+
+@route('/admin/product-component-map/post', method="POST")
+def admin_product_component_map_post():
+  real_secret = model.config.get('general', 'secret') 
+  their_secret = request.forms.secret
+  # Validate secret key
+  if their_secret == real_secret:
+    # Validate data
+    component_id = int(request.forms.component_id)
+    product_id = int(request.forms.product_id)
+    
+    if component_id > 0 and product_id > 0:
+      try:
+        # Insert data, update session
+        mapping = model.ProductComponentMap(component_id=component_id,
+          product_id=product_id)
+        model.session.add(mapping)
+        model.session.commit()
+      except:
+        # TODO: Log error.
+        model.session.rollback()
+  return admin_product_component_map()
 
 # Import configuration params
 def bootstrap():

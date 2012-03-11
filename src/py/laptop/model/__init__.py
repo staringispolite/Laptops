@@ -1,11 +1,11 @@
 import ConfigParser
 
-from sqlalchemy import Column, Index, Integer, String, Enum
+from sqlalchemy import Column, Index, Integer, String, Enum, ForeignKey
 from sqlalchemy.engine.base import Engine
 from sqlalchemy import create_engine
 from sqlalchemy.schema import MetaData
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship, backref
 
 metadata = MetaData()
 Base = declarative_base(metadata)
@@ -16,9 +16,9 @@ session = None
 def bootstrap():
   global config, engine, metadata, session
   # Local config
-  #config.read('config/app-local.cfg')
+  config.read('config/app-local.cfg')
   # Live config
-  config.read('config/app.cfg')
+  #config.read('config/app.cfg')
 
   username = config.get('sqlalchemy', 'username')
   password = config.get('sqlalchemy', 'password')
@@ -62,9 +62,10 @@ class Product(Base):
   __table_args__ = {'mysql_engine':'InnoDB'}
 
   id = Column(Integer, nullable=False, primary_key=True)
-  brand_id = Column(Integer, nullable=False, index=True)
+  brand_id = Column(Integer, ForeignKey('brand.id'), nullable=False, index=True)
   type = Column(Enum("desktop", "laptop", "tablet"))
   name = Column(String(256), nullable=False, index=True)
+  brand = relationship("Brand", backref=backref("products", order_by=id))
 
   def __repr__(self):
     return "<Product('%s','%s')>" % (self.id, self.name)
@@ -101,8 +102,10 @@ class ProductComponentMap(Base):
   __table_args__ = {'mysql_engine':'InnoDB'}
 
   id = Column(Integer, nullable=False, primary_key=True)
-  product_id = Column(Integer, nullable=False)
-  component_id = Column(Integer, nullable=False)
+  product_id = Column(Integer, ForeignKey('product.id'), nullable=False)
+  component_id = Column(Integer, ForeignKey('component.id'), nullable=False)
+  product = relationship("Product", uselist=False)
+  component = relationship("Component", uselist=False)
   
   def __repr__(self):
     return "<ProductComponentMap('%s','%s', '%s')>" % (
