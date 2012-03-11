@@ -83,7 +83,7 @@ def admin_brand_post():
 @route('/admin/product/')
 def admin_product():
   # Get product data
-  products = model.session.query(model.Product).all()
+  products = model.session.query(model.Product).join(model.Product.brand).all()
   brands = model.session.query(model.Brand).all()
   template = Template(filename='%s/admin/product.mako' % template_dir)
   return template.render(products=products, brands=brands)

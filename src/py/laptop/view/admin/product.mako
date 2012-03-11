@@ -29,14 +29,14 @@
     <td>id</td>
     <td>name</td>
     <td>type</td>
-    <td>brand id</td>
+    <td>brand id/name</td>
   <tr>
   % for product in products:
   <tr>
     <td>${product.id}</td>
     <td>${product.name}</td>
     <td>${product.type}</td>
-    <td>${product.brand_id}</td>
+    <td>${product.brand.id}/${product.brand.name}</td>
   </tr>
 % endfor
 </table>
